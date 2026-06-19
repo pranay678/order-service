@@ -26,11 +26,10 @@ public class OrderService {
         return repository.save(new Order(product, quantity));
     }
 
+    // FIXME: discountPct can be null when called from PromotionService —
+    // unboxing null Double to double throws NullPointerException
     public double applyDiscount(Order order, Double discountPct) {
         double price = order.getQuantity() * 9.99;
-        if (discountPct == null) {
-            return price;
-        }
-        return price - (price * discountPct);
+        return price - (price * discountPct);  // NPE when discountPct == null
     }
 }
