@@ -27,13 +27,10 @@ class OrderServiceTest {
         assertThat(result).isEqualTo(17.982);
     }
 
-    // This test passes null intentionally — reproduces the NullPointerException bug
     @Test
-    void applyDiscount_withNullDiscount_shouldThrowMeaningfulError() {
+    void applyDiscount_withNullDiscount_shouldReturnFullPrice() {
         Order order = orderService.create("Gadget", 2);
-        // BUG: applyDiscount does not guard null — will throw NullPointerException
         double result = orderService.applyDiscount(order, null);
-        // We expect 0 discount, but this line will never be reached
         assertThat(result).isEqualTo(19.98);
     }
 }

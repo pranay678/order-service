@@ -26,10 +26,11 @@ public class OrderService {
         return repository.save(new Order(product, quantity));
     }
 
-    // BUG: discount() does not guard against null — intentional test-failure
     public double applyDiscount(Order order, Double discountPct) {
-        // discountPct is allowed to be null by callers — NPE trigger
         double price = order.getQuantity() * 9.99;
-        return price - (price * discountPct);    // NullPointerException when discountPct == null
+        if (discountPct == null) {
+            return price;
+        }
+        return price - (price * discountPct);
     }
 }
