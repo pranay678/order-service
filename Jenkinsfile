@@ -1,13 +1,7 @@
 pipeline {
   agent any
 
-  tools {
-    maven 'Maven 3'
-    jdk   'JDK 21'
-  }
-
   options {
-    timestamps()
     timeout(time: 15, unit: 'MINUTES')
   }
 
@@ -20,25 +14,26 @@ pipeline {
 
     stage('Build') {
       steps {
-        sh 'mvn -B clean compile -pl sample-projects/order-service -am'
+        sh 'mvn -B clean compile -f sample-projects/order-service/pom.xml'
       }
     }
 
     stage('Test') {
       steps {
         // Intentional test failure: applyDiscount_withNullDiscount_shouldThrowMeaningfulError
-        sh 'mvn -B test -pl sample-projects/order-service -am'
+        sh 'mvn -B test -f sample-projects/order-service/pom.xml'
       }
       post {
         always {
-          junit 'sample-projects/order-service/target/surefire-reports/*.xml'
+          junit allowEmptyResults: true,
+                testResults: 'sample-projects/order-service/target/surefire-reports/*.xml'
         }
       }
     }
 
     stage('Package') {
       steps {
-        sh 'mvn -B package -DskipTests -pl sample-projects/order-service -am'
+        sh 'mvn -B package -DskipTests -f sample-projects/order-service/pom.xml'
       }
     }
   }
